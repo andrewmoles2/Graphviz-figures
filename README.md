@@ -15,3 +15,9 @@
 ## Example analysis file system
 
 ![](figures/fileSys.png)
+
+## For loops
+
+![](figures/for_loop.png)
+
+![](figures/for_loop_code.png)

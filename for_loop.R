@@ -1,0 +1,86 @@
+# for loop example
+library(DiagrammeR)
+library(DiagrammeRsvg)
+library(magrittr)
+library(rsvg)
+library(here)
+
+# basic outline
+DiagrammeR::grViz("digraph { 
+# define graph parameters
+graph [layout = dot, rankdir = TB, nodesep = 0.5, ranksep = 0.5, fontsize = 35, style = 'filled, rounded, bold', labelloc = t]   
+
+label = 'Flow diagram of a for loop';
+
+# global node parameters
+node [shape = rectangle, style = 'filled, rounded, bold', fillcolor = mistyrose, fontsize = 25, width = 4.5, height = 1.5, fixedsize = true]
+
+# global edge parameters
+edge [color = Black, arrowhead = vee, fontsize = 25, penwidth = 3]  
+
+# your nodes
+start [label = 'Start', group = g1]
+
+is_end [label = 'Last item\nin vector?', group = g1, fillcolor = Khaki]
+
+do_stuff [label = 'Statement', fillcolor = aliceblue]
+
+end [label = 'End', group = g1]
+
+# your edges
+start -> is_end
+is_end -> end [label = 'Yes']
+do_stuff -> start [label = 'Go to next item']
+{rank=same;is_end -> do_stuff [label = 'No']}
+
+}") -> for_loop
+for_loop
+
+# example with code 
+animals <- sample(rep(c("Dog", "Cat", "Fish", "Bird", "Rabbit")), 10, replace = TRUE)
+people <- sample(rep(c("Noah", "Olivia", "Oliver", "George", "Amelia", "Arthur")), 10, replace = TRUE)
+
+for (pets in seq_along(1:length(animals))) {
+  print(paste(people[pets], "owns a", animals[pets]))
+}
+
+DiagrammeR::grViz("digraph { 
+# define graph parameters
+graph [layout = dot, rankdir = TB, nodesep = 0.5, ranksep = 0.5, fontsize = 28, style = 'filled, rounded, bold', labelloc = t]   
+
+label = 'Flow diagram of a for loop (with code)';
+
+# global node parameters
+node [shape = rectangle, style = 'filled, rounded, bold', fillcolor = mistyrose, fontsize = 25, width = 4.95, height = 1.5, fixedsize = true]
+
+# global edge parameters
+edge [color = 'navy', arrowhead = vee, fontsize = 20, penwidth = 2.5]  
+
+start [label = 'Loop starts', group = g1]
+
+is_end [label = 'Last item of\nseq_along(1:length(animals))?', group = g1, fillcolor = Khaki]
+
+do_stuff [label = 'print(paste(people[pets],\n owns a, animals[pets]))', fillcolor = aliceblue]
+
+end [label = 'Loop ends', group = g1]
+
+start -> is_end
+is_end -> end [label = 'Yes']
+do_stuff -> start [label = 'Go to next item\nof animals and people']
+{rank=same;is_end -> do_stuff [label = 'No']}
+
+}") -> for_loop_code
+for_loop_code
+
+
+# save images
+export_svg(for_loop) %>%
+  charToRaw() %>%
+  rsvg::rsvg_png(here("figures", "for_loop.png"))
+
+export_svg(for_loop_code) %>%
+  charToRaw() %>%
+  rsvg::rsvg_png(here("figures", "for_loop_code.png"))
+
+
+

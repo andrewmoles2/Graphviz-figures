@@ -1,0 +1,76 @@
+digraph {
+                  
+graph [layout = dot, rankdir = TB, nodesep = 0.3, ranksep = 0.3, fontsize = 30, fillcolor = 'Gainsboro', color = 'Purple3', style = 'filled, rounded, bold']
+
+label = 'Secondary care data flow for  OP, ED and Adm data';
+
+# define the global styles of the nodes
+node[shape = rectangle, style = 'filled, rounded, bold', fillcolor = mistyrose, fontsize = 25, width = 4.2, height = 1.5, fixedsize = true]
+
+edge [color = Black, arrowhead = vee, fontsize = 16]
+
+# nodes
+
+datShar [label = 'CYPHP data sharing\n agreements with\n GSTT and KCH', fillcolor = honeyDew, group = g1]
+
+fields [label = 'Agreed data fields\n to be extracted for\n OP, ED and Adm', group = g1]
+
+gsttEx [label = 'Agreed data fields\n selected and extracted\n by CYPHP analyst']
+
+KCHEx [label = 'Agreed data fields\n selected and extracted\n by KCH data team']
+
+python [label = 'Python pseudonymising\n script with CYPHP key', group = g1]
+
+gsttpseNHS [label = 'Pseudonymised\n NHS number added']
+
+kchpseNHS [label = 'Pseudonymised\n NHS number added,\n NHS number removed']
+
+kchSend [label = 'Data sent to\n CYPHP analyst\n quarterly via nhs.net']
+
+CCdataVal [label = 'Data validation\n on files']
+
+CCclean [label = 'Initial cleaning steps:\n merging extracts,\n adding age, and LSOA']
+
+key [label = 'OP = Outpatient\n ED = A&E\n Adm = Admitted patient care\n PAS = patient\n administration system', height = 2.5, fillcolor = '#C3B0CC']
+
+# database nodes
+node[shape = cylinder, fillcolor = AliceBlue]
+
+gsttPAS [label = 'GSTT PAS\n database']
+
+kchPAS [label = 'KCH PAS\n database']
+
+cyphpSt [label = 'Raw data files stored in\n CYPHPs GSTT\n S drive', group = g1, height = 2]
+
+cyphpFin [label = 'Final merged data files\n (excel) in GSTT S drive']
+
+# subgraph clusters for gstt and kch
+
+subgraph cluster0{
+label = 'GSTT'
+color = Orange
+
+gsttPAS -> gsttEx -> gsttpseNHS
+
+}
+
+subgraph cluster1{
+label = 'KCH'
+
+kchPAS -> KCHEx -> kchpseNHS -> kchSend
+
+}
+
+# edge definitions with the node IDs
+
+datShar -> {fields gsttEx KCHEx} [style = dashed, color = Crimson]
+
+fields -> {gsttPAS kchPAS}
+
+fields -> {gsttEx KCHEx}
+
+python -> {gsttpseNHS kchpseNHS}
+
+{gsttpseNHS kchSend} -> cyphpSt -> CCdataVal -> CCclean -> cyphpFin
+                  
+}
