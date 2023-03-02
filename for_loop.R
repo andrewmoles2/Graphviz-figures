@@ -5,7 +5,7 @@ library(magrittr)
 library(rsvg)
 library(here)
 
-# basic outline
+# basic outline ----
 DiagrammeR::grViz("digraph { 
 # define graph parameters
 graph [layout = dot, rankdir = TB, nodesep = 0.5, ranksep = 0.5, fontsize = 35, style = 'filled, rounded, bold', labelloc = t]   
@@ -36,7 +36,7 @@ do_stuff -> start [label = 'Go to next item']
 }") -> for_loop
 for_loop
 
-# example with code 
+# example with code  ----
 animals <- sample(rep(c("Dog", "Cat", "Fish", "Bird", "Rabbit")), 10, replace = TRUE)
 people <- sample(rep(c("Noah", "Olivia", "Oliver", "George", "Amelia", "Arthur")), 10, replace = TRUE)
 
@@ -72,8 +72,55 @@ do_stuff -> start [label = 'Go to next item\nof animals and people']
 }") -> for_loop_code
 for_loop_code
 
+# another for loop example ----
 
-# save images
+# vectors of numbers
+a <- c(5, 7, 1, 3, 11)
+b <- 12
+# empty vector
+c <- rep(NA, length(a))
+# for loop to do calculations and export as strings
+for (number in seq_along(a)){
+  c[number] <- paste0(a[number], "*", b, " = ", a[number]*b)
+}
+# print result
+c
+
+DiagrammeR::grViz("digraph { 
+# define graph parameters
+graph [layout = dot, rankdir = TB, nodesep = 0.5, ranksep = 0.5, fontsize = 28, style = 'filled, rounded, bold', labelloc = t]   
+
+label = 'Flow diagram of a for loop (with code)';
+
+# global node parameters
+node [shape = rectangle, style = 'filled, rounded, bold', fillcolor = mistyrose, fontsize = 25, width = 4.95, height = 1.5, fixedsize = true]
+
+# global edge parameters
+edge [color = 'navy', arrowhead = vee, fontsize = 20, penwidth = 2.5]  
+
+define [label = 'Make empty vector\nc <- rep(NA, length(a))']
+
+start [label = 'Loop starts', group = g1]
+
+is_end [label = 'Last item of\nseq_along(a)?', group = g1, fillcolor = Khaki]
+
+do_stuff [label = 'c[number] <- paste0(a[number],\n *, b, = , a[number]*b)', fillcolor = aliceblue]
+
+end [label = 'Loop ends', group = g1]
+
+outcome [label = 'Print outcome\n5*12 = 60 7*12 = 84 ...']
+
+define -> start
+start -> is_end
+is_end -> end [label = 'Yes']
+do_stuff -> start [label = 'Go to next item\nof vector a']
+{rank=same;is_end -> do_stuff [label = 'No']}
+end -> outcome
+
+}") -> for_loop_code2
+for_loop_code2
+
+# save images ----
 export_svg(for_loop) %>%
   charToRaw() %>%
   rsvg::rsvg_png(here("figures", "for_loop.png"))
@@ -82,5 +129,7 @@ export_svg(for_loop_code) %>%
   charToRaw() %>%
   rsvg::rsvg_png(here("figures", "for_loop_code.png"))
 
-
+export_svg(for_loop_code2) %>%
+  charToRaw() %>%
+  rsvg::rsvg_png(here("figures", "for_loop_code2.png"))
 
